@@ -268,7 +268,7 @@ class RoboFile extends \Robo\Tasks {
    * Build aegir and devshop containers from the Dockerfiles. Detects your UID
    * or you can pass as an argument.
    */
-  public function prepareContainers($os_slug = 'ubuntu18', $tag = 'local') {
+  public function prepareContainers($os_slug = 'ubuntu1804', $tag = 'local') {
       $os_cmd = $this::INIT_MAP[$os_slug];
       $devshop_playbooks = [
         'playbook.server.yml'
