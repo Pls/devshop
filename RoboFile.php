@@ -44,7 +44,13 @@ class RoboFile extends \Robo\Tasks {
   // Defines the URI we will use for the devmaster site.
   const DEVSHOP_LOCAL_URI = 'devshop.local.computer';
 
-  /**
+  const INIT_MAP = [
+      'centos7' => '/usr/lib/systemd/systemd',
+      'ubuntu1604' => '/lib/systemd/systemd',
+      'ubuntu1804' => '/lib/systemd/systemd',
+  ];
+
+    /**
    * @var The path to devshop root. Used for upgrades.
    */
   private $devshop_root_path;
@@ -262,32 +268,21 @@ class RoboFile extends \Robo\Tasks {
    * Build aegir and devshop containers from the Dockerfiles. Detects your UID
    * or you can pass as an argument.
    */
-  public function prepareContainers($user_uid = NULL) {
+  public function prepareContainers($os_slug = 'ubuntu18', $tag = 'local') {
+      $os_cmd = $this::INIT_MAP[$os_slug];
+      $devshop_playbooks = [
+        'playbook.server.yml'
+      ];
 
-    if (is_null($user_uid)) {
-      $user_uid = trim(shell_exec('id -u'));
-    }
-
-    $this->say("Found UID $user_uid. Passing to docker build as a build-arg...");
-
-    // aegir/hostmaster
-    $versions = array(
-      '7',
-      '71',
-      '72'
-    );
-    foreach ($versions as $version) {
-      $this->taskDockerBuild('aegir-dockerfiles')
-         ->option('file', "aegir-dockerfiles/Dockerfile-php{$version}")
-         ->option('build-arg', "AEGIR_UID=$user_uid")
-         ->tag("aegir/hostmaster:php{$version}")
-         ->run();
-
-      $this->taskDockerBuild('aegir-dockerfiles')
-         ->option('file', "aegir-dockerfiles/Dockerfile-xdebug-php{$version}")
-         ->tag("aegir/hostmaster:php{$version}-xdebug")
-         ->run();
-    }
+      foreach ($devshop_playbooks as $playbook) {
+          $this->taskDockerBuild('.')
+             ->option('file', "Dockerfile")
+             ->option('build-arg', "OS_SLUG=$os_slug")
+             ->option('build-arg', "OS_CMD=$os_cmd")
+             ->option('build-arg', "DEVSHOP_PLAYBOOK=$playbook")
+             ->tag("devshop/server:local")
+             ->run();
+      }
   }
 
   /**
@@ -430,15 +425,7 @@ class RoboFile extends \Robo\Tasks {
     }
     elseif ($opts['mode'] == 'install.sh' || $opts['mode'] == 'manual') {
 
-      $init_map = [
-        'centos:7' => '/usr/lib/systemd/systemd',
-        'ubuntu:14.04' => '/sbin/init',
-        'geerlingguy/docker-ubuntu1404-ansible' => '/sbin/init',
-        'geerlingguy/docker-ubuntu1604-ansible' => '/lib/systemd/systemd',
-        'geerlingguy/docker-centos7-ansible' => '/usr/lib/systemd/systemd',
-      ];
-
-      $init = isset($init_map[$opts['install-sh-image']])? $init_map[$opts['install-sh-image']]: '/sbin/init';
+      $init = isset($this::INIT_MAP[$opts['install-sh-image']])? $this::INIT_MAP[$opts['install-sh-image']]: '/sbin/init';
 
       # This is the list of test sites, set in .travis.yml.
       # This is so requests to these sites go back to localhost.
