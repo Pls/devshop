@@ -271,16 +271,27 @@ class RoboFile extends \Robo\Tasks {
   public function prepareContainers($os_slug = 'ubuntu1804', $tag = 'local') {
       $os_cmd = $this::INIT_MAP[$os_slug];
       $devshop_playbooks = [
-        'playbook.server.yml'
+        'base' => 'playbook.base.yml',
+        'server' => 'playbook.server.yml'
       ];
+//
+//      // Create core dockerfile with all the roles.
+//      $this->taskDockerBuild('.')
+//        ->option('file', "Dockerfile.core")
+//        ->option('build-arg', "OS_SLUG=$os_slug")
+//        ->option('build-arg', "OS_CMD=$os_cmd")
+//        ->tag("devshop/core-$os_slug:$tag")
+//        ->run();
 
-      foreach ($devshop_playbooks as $playbook) {
+      foreach ($devshop_playbooks as $name => $playbook) {
           $this->taskDockerBuild('.')
              ->option('file', "Dockerfile")
              ->option('build-arg', "OS_SLUG=$os_slug")
              ->option('build-arg', "OS_CMD=$os_cmd")
              ->option('build-arg', "DEVSHOP_PLAYBOOK=$playbook")
-             ->tag("devshop/server:local")
+             ->option('build-arg', "DEVSHOP_CORE_TAG=$tag")
+             ->tag("devshop/$name-$os_slug:$tag")
+             ->option('no-cache')
              ->run();
       }
   }

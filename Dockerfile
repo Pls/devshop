@@ -7,24 +7,26 @@
 #
 #
 ARG OS_SLUG="ubuntu1804"
-ARG OS_CMD="/lib/systemd/systemd"
+ARG DEVSHOP_CORE_TAG="latest"
 
-ARG DEVSHOP_PLAYBOOK="playbook.server.yml"
-
-FROM geerlingguy/docker-${OS_SLUG}-ansible
+FROM devshop/core-${OS_SLUG}:${DEVSHOP_CORE_TAG}
 USER root
 
-# Copy DevShop source into container.
-COPY ./ /usr/share/devshop
+ARG OS_CMD="/lib/systemd/systemd"
+ENV OS_CMD=$OS_CMD
 
-# Install galaxy roles
-COPY https://raw.githubusercontent.com/geerlingguy/drupal-vm/master/provisioning/requirements.yml /usr/share/devshop/roles/requirements.yml
-RUN ansible-galaxy install -r requirements.yml --force
+ARG DEVSHOP_PLAYBOOK="playbook.server.yml"
+ENV DEVSHOP_PLAYBOOK ${DEVSHOP_PLAYBOOK:-"xxx"}
+
+ARG DEVSHOP_HOSTNAME="devshop.local.computer"
+ENV DEVSHOP_HOSTNAME=$DEVSHOP_HOSTNAME
+
+RUN echo "Preparing container using Ansible Playbook ${DEVSHOP_PLAYBOOK}:"
+RUN cat /usr/share/devshop/roles/${DEVSHOP_PLAYBOOK}
 
 # Run the ansible playbook inside Docker.
-RUN ansible-playbook /etc/ansible/devshop/$DEVSHOP_PLAYBOOK \
-  # Enable FPM. See https://github.com/geerlingguy/drupal-vm/issues/1366.
-  && systemctl enable php7.2-fpm.service
+RUN echo "Running Playbook: /usr/share/devshop/roles/${DEVSHOP_PLAYBOOK}"
+RUN ansible-playbook  /usr/share/devshop/roles/${DEVSHOP_PLAYBOOK} --extra-vars="server_hostname=${DEVSHOP_HOSTNAME}"
 
 EXPOSE 80 443 3306 8025
 

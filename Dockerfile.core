@@ -1,0 +1,33 @@
+#
+# DevShop Core: A container will all available roles and devshop CLI pre-installed.
+#
+# This container can be built from multiple OS using Build-args.#
+#
+
+ARG OS_SLUG="ubuntu1804"
+
+FROM geerlingguy/docker-${OS_SLUG}-ansible
+USER root
+
+ARG OS_CMD="/lib/systemd/systemd"
+ENV OS_CMD=$OS_CMD
+
+ARG DEVSHOP_PLAYBOOK="playbook.server.yml"
+ENV DEVSHOP_PLAYBOOK=$DEVSHOP_PLAYBOOK
+
+ARG DEVSHOP_HOSTNAME="devshop.local.computer"
+ENV DEVSHOP_HOSTNAME=$DEVSHOP_HOSTNAME
+
+ENV DEVSHOP_ANSIBLE_REQUIREMENTS_FILE=/etc/ansible/devshop.requirements.yml
+ENV DEVSHOP_ANSIBLE_ROLES_PATH=/etc/ansible/roles
+COPY ./roles/requirements.yml $DEVSHOP_ANSIBLE_REQUIREMENTS_FILE
+
+# Install galaxy roles
+RUN echo "Installing Ansible Roles from ${DEVSHOP_ANSIBLE_REQUIREMENTS_FILE} to ${DEVSHOP_ANSIBLE_ROLES_PATH}"
+RUN cat ${DEVSHOP_ANSIBLE_REQUIREMENTS_FILE}
+RUN ansible-galaxy install --role-file ${DEVSHOP_ANSIBLE_REQUIREMENTS_FILE} --roles-path ${DEVSHOP_ANSIBLE_ROLES_PATH}
+
+# Copy DevShop source into container.
+COPY ./ /usr/share/devshop
+
+CMD ["$OS_CMD"]
