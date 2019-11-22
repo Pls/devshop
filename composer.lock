@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "393b07ee589ceec8777a405784ce392e",
+    "content-hash": "18cff3351dfdcd85f699785b0a734450",
     "packages": [
         {
             "name": "asm/php-ansible",
@@ -608,6 +608,7 @@
             ],
             "description": "Promoting the interoperability of container objects (DIC, SL, etc.)",
             "homepage": "https://github.com/container-interop/container-interop",
+            "abandoned": "psr/container",
             "time": "2017-02-14T19:40:03+00:00"
         },
         {
@@ -3146,12 +3147,64 @@
             ],
             "description": "Sanitized FileInfo with safe getRealPath() and other handy methods",
             "time": "2019-11-12T23:23:19+00:00"
+        },
+        {
+            "name": "toni/splitsh",
+            "version": "dev-bin-dir",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jonpugh/splitsh.git",
+                "reference": "882356933f9d6959fdf926811de953ce30369d76"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jonpugh/splitsh/zipball/882356933f9d6959fdf926811de953ce30369d76",
+                "reference": "882356933f9d6959fdf926811de953ce30369d76",
+                "shasum": ""
+            },
+            "bin": [
+                "bin/splitsh-install",
+                "bin/splitsh-lite"
+            ],
+            "type": "library",
+            "scripts": {
+                "splitsh-install": [
+                    "bin/splitsh-install"
+                ],
+                "post-install-cmd": [
+                    "@splitsh-install"
+                ],
+                "post-update-command": [
+                    "@splitsh-install"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Anthonius Munthi",
+                    "homepage": "https://itstoni.com"
+                }
+            ],
+            "description": "splitsh-lite binary",
+            "homepage": "https://github.com/toni/splitsh",
+            "keywords": [
+                "bin",
+                "monorepo",
+                "splitsh-lite",
+                "tools"
+            ],
+            "support": {
+                "source": "https://github.com/jonpugh/splitsh/tree/bin-dir"
+            },
+            "time": "2019-11-22T19:54:42+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "symplify/monorepo-builder": 20
+        "toni/splitsh": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

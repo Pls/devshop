@@ -13,12 +13,12 @@
         "php": "^7.1"
     },
     "require-dev": {
-        "symplify/monorepo-builder": "dev-devshop"
+        "toni/splitsh": "dev-bin-dir"
     },
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/jonpugh/MonorepoBuilder"
+            "url": "https://github.com/jonpugh/splitsh"
         }
     ],
     "authors": [
