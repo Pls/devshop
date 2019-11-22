@@ -13,14 +13,8 @@
         "php": "^7.1"
     },
     "require-dev": {
-        "toni/splitsh": "dev-bin-dir"
+        "toni/splitsh": "v1.0.1.4"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/jonpugh/splitsh"
-        }
-    ],
     "authors": [
         {
             "name": "Jon Pugh",
@@ -44,6 +38,7 @@
     "prefer-stable": true,
     "scripts": {
         "post-install-cmd": [
+            "bin/splitsh-install",
             "php -r \"copy('https://github.com/drush-ops/drush/releases/download/8.3.0/drush.phar', 'bin/drush');\"",
             "php -r \"chmod('bin/drush', 0755);\"",
             "drush --version"
