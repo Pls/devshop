@@ -1,4 +1,4 @@
-name: Build DevShop Server Container
+name: Build Servers
 
 on: [push]
 
@@ -9,12 +9,19 @@ jobs:
 
   build:
 
-    runs-on: ubuntu-latest
+    # The environment to run the docker commands in. (Not the server OS)
+    runs-on: ubuntu-16.04
+    strategy:
+      matrix:
+        server_os:
+        - ubuntu1604
+        - ubuntu1804
+        - centos7
 
     steps:
     - uses: actions/checkout@v1
     - name: Build the DevShop Server Docker image
-      run: docker build . --file Dockerfiles/Dockerfile --tag devshop/server:$GITHUB_SHA
+      run: docker build . --file Dockerfile.build --build-arg SERVER_OS=${{ matrix.server_os }} --tag devshop/server:$GITHUB_SHA
 
     - name: Run DevShop Server and tests
       run: docker run -e GITHUB_TOKEN=$GITHUB_TOKEN devshop/server:$GITHUB_SHA devshop-tests.sh
