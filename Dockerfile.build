@@ -1,0 +1,3 @@
+ARG IMAGE_NAME=http
+ARG IMAGE_TAG=php7
+FROM geerlingguy/docker-${MOLECULE_DISTRO:-centos7}-ansible
