@@ -526,6 +526,8 @@ class RoboFile extends \Robo\Tasks {
       # "No container found for devshop_1"?
       $cmd[] = "sleep 3";
       $cmd[] = "docker-compose logs ";
+      $cmd[] = "sleep 3";
+      $cmd[] = "docker ps";
 
       $cmd[] = "docker-compose exec -T devshop ls -la /var/aegir";
       $cmd[] = "docker-compose exec -T devshop ls -la /usr/share/devshop/.github/test-assets";
