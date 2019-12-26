@@ -521,6 +521,12 @@ class RoboFile extends \Robo\Tasks {
       $cmd[] = "docker-compose up -d";
       $cmd[] = "sleep 3";
       $cmd[] = "docker ps";
+
+      # @TODO: 3 days ago the scheduled tests started failing, every time with  https://github.com/opendevshop/devshop/commit/4dce87a73ab6c09654d828dc9c6e666f850ae453/checks?check_suite_id=374715707#step:8:48
+      # "No container found for devshop_1"?
+      $cmd[] = "sleep 3";
+      $cmd[] = "docker-compose logs ";
+
       $cmd[] = "docker-compose exec -T devshop ls -la /var/aegir";
       $cmd[] = "docker-compose exec -T devshop ls -la /usr/share/devshop/.github/test-assets";
 
